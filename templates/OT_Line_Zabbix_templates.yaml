@@ -1,0 +1,136 @@
+zabbix_export:
+  version: '7.0'
+  template_groups:
+    - uuid: a1bb9390efd044de8346f300c4fadf31
+      name: OT
+  templates:
+    - uuid: d3ee533b43f5492888fe89fb39e30479
+      template: 'Allen-Bradley PLC'
+      name: 'Allen-Bradley PLC'
+      groups:
+        - name: OT
+      items:
+        - uuid: 5087ad2ec3cb4c7e9a296dd6b39a6a04
+          name: 'Keyswitch mode'
+          key: ab.keyswitch
+          value_type: TEXT
+          trends: '0'
+        - uuid: becf93b7e564434ca3c9e28418ad1131
+          name: 'Last seen'
+          type: TRAP
+          key: dev.last_seen
+          delay: '0'
+        - uuid: 386865e44e69485885a9eb1f0c9938ea
+          name: 'Device reachable'
+          type: TRAP
+          key: dev.reachable
+          delay: '0'
+          triggers:
+            - uuid: 193dcdf000f641db8eb9f868cb189cd5
+              expression: 'max(/Allen-Bradley PLC/dev.reachable,3m)=0'
+              name: 'Device offline'
+              priority: HIGH
+            - uuid: 0e2034f662274ea5b9b42ce6298c6599
+              expression: 'max(/Allen-Bradley PLC/dev.reachable,10m)=1'
+              name: 'Nessun dato dalla testa linea (trapper)'
+              priority: WARNING
+    - uuid: 2cd42737211a4932a6416cb0170033cb
+      template: 'EtherNet-IP device'
+      name: 'EtherNet-IP device'
+      groups:
+        - name: OT
+      items:
+        - uuid: 365507396c04440daca7621df7f009ee
+          name: 'Last seen'
+          type: TRAP
+          key: dev.last_seen
+          delay: '0'
+        - uuid: 537e049606b443b9b8de0a951b5d507b
+          name: 'Device reachable'
+          type: TRAP
+          key: dev.reachable
+          delay: '0'
+          triggers:
+            - uuid: 93d0c980fa4c4f1a937bcf9213146f6e
+              expression: 'max(/EtherNet-IP device/dev.reachable,3m)=0'
+              name: 'Device offline'
+              priority: HIGH
+            - uuid: 1a1ca34dea944953a6a1ad223abb062c
+              expression: 'nodata(/EtherNet-IP device/dev.reachable,10m)=1'
+              name: 'Nessun dato dalla testa linea (trapper)'
+              priority: WARNING
+    - uuid: 7ef111bc80404b0697618af9ca23da79
+      template: 'Generic device'
+      name: 'Generic device'
+      groups:
+        - name: OT
+      items:
+        - uuid: 205cec7c9a6e46dda56dde9284cc02cb
+          name: 'Last seen'
+          type: TRAP
+          key: dev.last_seen
+          delay: '0'
+        - uuid: 43fd765bda7e4111bbe2ad94a0cd2fc2
+          name: 'Device reachable'
+          type: TRAP
+          key: dev.reachable
+          delay: '0'
+          triggers:
+            - uuid: e4a470df2fd349d998a87c04649eff71
+              expression: 'max(/Generic device/dev.reachable,3m)=0'
+              name: 'Device offline'
+              priority: HIGH
+            - uuid: d3cc4b4c44664480bd35b6081ddfbb7b
+              expression: 'nodata(/Generic device/dev.reachable,10m)=1'
+              name: 'Nessun dato dalla testa linea (trapper)'
+              priority: WARNING
+    - uuid: 1ede1524b2634c16bbc031280bb3e3d7
+      template: 'PROFINET device'
+      name: 'PROFINET device'
+      groups:
+        - name: OT
+      items:
+        - uuid: 455f35e12e9548998cd28ad92c178f2f
+          name: 'Last seen'
+          type: TRAP
+          key: dev.last_seen
+          delay: '0'
+        - uuid: f05dc2ead6a841e88a0ed869c560edad
+          name: 'Device reachable'
+          type: TRAP
+          key: dev.reachable
+          delay: '0'
+          triggers:
+            - uuid: 69f680c9cef44bf791a26cfe83ccf02a
+              expression: 'max(/PROFINET device/dev.reachable,3m)=0'
+              name: 'Device offline'
+              priority: HIGH
+            - uuid: cedbc6393c6c4e38b569adb399a333c6
+              expression: 'nodata(/PROFINET device/dev.reachable,10m)=1'
+              name: 'Nessun dato dalla testa linea (trapper)'
+              priority: WARNING
+    - uuid: a57f1ecf9bcb4ee09c71fcd98a8e8cd4
+      template: 'Siemens PLC'
+      name: 'Siemens PLC'
+      groups:
+        - name: OT
+      items:
+        - uuid: 23db09201d874d8d950c928a08f3577b
+          name: 'Last seen'
+          type: TRAP
+          key: dev.last_seen
+          delay: '0'
+        - uuid: 0bfbfc990521499ba1454d9248fa430d
+          name: 'Device reachable'
+          type: TRAP
+          key: dev.reachable
+          delay: '0'
+          triggers:
+            - uuid: 74be70a857f744eb8e67b1cdcdc62545
+              expression: 'max(/Siemens PLC/dev.reachable,3m)=0'
+              name: 'Device offline'
+              priority: HIGH
+            - uuid: afece7ed83834c34bff1e0cd1cf94138
+              expression: 'nodata(/Siemens PLC/dev.reachable,10m)=1'
+              name: 'Nessun dato dalla testa linea (trapper)'
+              priority: WARNING

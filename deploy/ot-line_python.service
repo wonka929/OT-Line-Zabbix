@@ -1,0 +1,16 @@
+[Unit]
+Description=OT Line Zabbix head (discovery + trapper)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+# Scapy/DCP richiedono root (raw socket)
+User=root
+WorkingDirectory=/opt/ot-line-zabbix
+ExecStart=/opt/ot-line-zabbix/.venv/bin/python main.py --config /opt/ot-line-zabbix/config.yaml
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

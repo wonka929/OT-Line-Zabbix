@@ -1,0 +1,168 @@
+# Template Zabbix 7.0 LTS - importare via Data collection > Templates > Import
+# Formato: export YAML Zabbix 7.0 (trapper item = type: TRAP)
+zabbix_export:
+  version: '7.0'
+  template_groups:
+    - uuid: b1a7f00d000000000000000000000001
+      name: OT
+  templates:
+    - uuid: b1a7f00d000000000000000000000101
+      template: 'OT / Allen-Bradley PLC'
+      name: 'OT / Allen-Bradley PLC'
+      description: |
+        Device Allen-Bradley (EtherNet/IP CIP) scoperto dalla testa linea.
+        I valori arrivano via Zabbix trapper dallo script OT_Line_Zabbix.
+      macros:
+        - macro: '{$TRAPPER.ALLOWED_HOSTS}'
+          value: '0.0.0.0/0'
+      items:
+        - uuid: b1a7f00d000000000000000000000102
+          name: 'Device reachable'
+          key: dev.reachable
+          type: TRAP
+          value_type: UNSIGNED
+          description: '1 = visto ad ARP/ping, 0 = non raggiungibile'
+        - uuid: b1a7f00d000000000000000000000103
+          name: 'Last seen'
+          key: dev.last_seen
+          type: TRAP
+          value_type: UNSIGNED
+          description: 'Unix timestamp dell''ultima volta visto vivo'
+        - uuid: b1a7f00d000000000000000000000104
+          name: 'Keyswitch mode'
+          key: ab.keyswitch
+          type: TRAP
+          value_type: CHAR
+          description: 'Modalita'' keyswitch (RUN REM / PROG REM / REM), letta via LogixDriver.info'
+      triggers:
+        - uuid: b1a7f00d000000000000000000000105
+          expression: 'max(/"OT / Allen-Bradley PLC"/dev.reachable,3m)=0'
+          name: 'Device offline'
+          priority: HIGH
+        - uuid: b1a7f00d000000000000000000000106
+          expression: 'nodata(/"OT / Allen-Bradley PLC"/dev.reachable,10m)=1'
+          name: 'Nessun dato dalla testa linea (trapper)'
+          priority: WARNING
+    - uuid: b1a7f00d000000000000000000000201
+      template: 'OT / Siemens PLC'
+      name: 'OT / Siemens PLC'
+      description: |
+        Device Siemens / PROFINET (S7-1200/1500, ET200...) scoperto dalla testa linea
+        via         DCP. Inventario (firmware, serial, modulo) aggiornato via API da SZL.
+      macros:
+        - macro: '{$TRAPPER.ALLOWED_HOSTS}'
+          value: '0.0.0.0/0'
+      items:
+        - uuid: b1a7f00d000000000000000000000202
+          name: 'Device reachable'
+          key: dev.reachable
+          type: TRAP
+          value_type: UNSIGNED
+          description: '1 = visto ad ARP/ping, 0 = non raggiungibile'
+        - uuid: b1a7f00d000000000000000000000203
+          name: 'Last seen'
+          key: dev.last_seen
+          type: TRAP
+          value_type: UNSIGNED
+          description: 'Unix timestamp dell''ultima volta visto vivo'
+      triggers:
+        - uuid: b1a7f00d000000000000000000000204
+          expression: 'max(/"OT / Siemens PLC"/dev.reachable,3m)=0'
+          name: 'Device offline'
+          priority: HIGH
+        - uuid: b1a7f00d000000000000000000000205
+          expression: 'nodata(/"OT / Siemens PLC"/dev.reachable,10m)=1'
+          name: 'Nessun dato dalla testa linea (trapper)'
+          priority: WARNING
+    - uuid: b1a7f00d000000000000000000000301
+      template: 'OT / EtherNet-IP device'
+      name: 'OT / EtherNet-IP device'
+      description: |
+        Device EtherNet/IP (CIP) non Rockwell: drive, drive da rete, altri.
+        Scoperto via ListIdentity broadcast dalla testa linea.
+      macros:
+        - macro: '{$TRAPPER.ALLOWED_HOSTS}'
+          value: '0.0.0.0/0'
+      items:
+        - uuid: b1a7f00d000000000000000000000302
+          name: 'Device reachable'
+          key: dev.reachable
+          type: TRAP
+          value_type: UNSIGNED
+          description: '1 = visto ad ARP/ping, 0 = non raggiungibile'
+        - uuid: b1a7f00d000000000000000000000303
+          name: 'Last seen'
+          key: dev.last_seen
+          type: TRAP
+          value_type: UNSIGNED
+          description: 'Unix timestamp dell''ultima volta visto vivo'
+      triggers:
+        - uuid: b1a7f00d000000000000000000000304
+          expression: 'max(/"OT / EtherNet-IP device"/dev.reachable,3m)=0'
+          name: 'Device offline'
+          priority: HIGH
+        - uuid: b1a7f00d000000000000000000000305
+          expression: 'nodata(/"OT / EtherNet-IP device"/dev.reachable,10m)=1'
+          name: 'Nessun dato dalla testa linea (trapper)'
+          priority: WARNING
+    - uuid: b1a7f00d000000000000000000000401
+      template: 'OT / PROFINET device'
+      name: 'OT / PROFINET device'
+      description: |
+        Device PROFINET non Siemens (terze parti) scoperto via DCP.
+      macros:
+        - macro: '{$TRAPPER.ALLOWED_HOSTS}'
+          value: '0.0.0.0/0'
+      items:
+        - uuid: b1a7f00d000000000000000000000402
+          name: 'Device reachable'
+          key: dev.reachable
+          type: TRAP
+          value_type: UNSIGNED
+          description: '1 = visto ad ARP/ping, 0 = non raggiungibile'
+        - uuid: b1a7f00d000000000000000000000403
+          name: 'Last seen'
+          key: dev.last_seen
+          type: TRAP
+          value_type: UNSIGNED
+          description: 'Unix timestamp dell''ultima volta visto vivo'
+      triggers:
+        - uuid: b1a7f00d000000000000000000000404
+          expression: 'max(/"OT / PROFINET device"/dev.reachable,3m)=0'
+          name: 'Device offline'
+          priority: HIGH
+        - uuid: b1a7f00d000000000000000000000405
+          expression: 'nodata(/"OT / PROFINET device"/dev.reachable,10m)=1'
+          name: 'Nessun dato dalla testa linea (trapper)'
+          priority: WARNING
+    - uuid: b1a7f00d000000000000000000000501
+      template: 'OT / Generic device'
+      name: 'OT / Generic device'
+      description: |
+        PC, switch e altri device solo-ARP scoperti dalla testa linea.
+        Il campo "type" nei tag distingue pc da generic.
+      macros:
+        - macro: '{$TRAPPER.ALLOWED_HOSTS}'
+          value: '0.0.0.0/0'
+      items:
+        - uuid: b1a7f00d000000000000000000000502
+          name: 'Device reachable'
+          key: dev.reachable
+          type: TRAP
+          value_type: UNSIGNED
+          description: '1 = visto ad ARP/ping, 0 = non raggiungibile'
+        - uuid: b1a7f00d000000000000000000000503
+          name: 'Last seen'
+          key: dev.last_seen
+          type: TRAP
+          value_type: UNSIGNED
+          description: 'Unix timestamp dell''ultima volta visto vivo'
+      triggers:
+        - uuid: b1a7f00d000000000000000000000504
+          expression: 'max(/"OT / Generic device"/dev.reachable,3m)=0'
+          name: 'Device offline'
+          priority: HIGH
+        - uuid: b1a7f00d000000000000000000000505
+          expression: 'nodata(/"OT / Generic device"/dev.reachable,10m)=1'
+          name: 'Nessun dato dalla testa linea (trapper)'
+          priority: WARNING
