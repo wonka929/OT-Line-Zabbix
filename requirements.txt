@@ -1,0 +1,7 @@
+pnio_dcp
+pycomm3
+scapy
+psutil
+requests
+pyyaml
+zabbix-utils

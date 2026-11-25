@@ -1,0 +1,100 @@
+# Copia questo file in config.yaml e adattalo.
+# config.yaml NON viene committato (contiene l'API token).
+
+line:
+  # Nome della linea: usato come host visibile "testa linea" (se LLD overview abilitata)
+  # e come tag "line:" su tutti i device creati
+  name: STATION_NAME_DEFAULT
+  # Gruppo host Zabbix dove finiscono i device (creato via API se non esiste)
+  host_group: "OT/STATION_NAME_DEFAULT"
+  # Interfaccia di scoperta (una o piu', separate da virgola):
+  #   auto          -> tutte le NIC IPv4 (escluso loopback)
+  #   nome o ip     -> "Ethernet" oppure "192.168.1.5"
+  #   multi         -> "Ethernet,eth4,192.168.2.5" (ARP e DCP su ogni interfaccia)
+  iface: auto
+
+zabbix:
+  # Indirizzo del SERVER o PROXY Zabbix (porta 10051, Sender protocol)
+  sender_host: 172.26.104.11
+  sender_port: 10051
+  # Endpoint JSON-RPC per la REST API (Zabbix 7.0)
+  api_url: "http://172.26.104.11/zabbix/api_jsonrpc.php"
+  # API token (Administration -> Users -> API tokens), oppure env ZABBIX_API_TOKEN
+  api_token: "2b7cf4f10bff657b6c3d00e1c02b7f2eb24d4d60116667cfb2ebcca1e270677b"
+  # Nome tecnico host = host_prefix + IP con i punti sostituiti da trattini
+  # es. ot-192-168-1-10  (il Sender invia valori a questo nome)
+  host_prefix: "STATION_NAME_DEFAULT-"
+
+intervals:
+  # Ciclo stato: ARP veloce + invio dev.reachable / dev.last_seen
+  status_sec: 120
+  # Ciclo discovery: ARP + DCP + CIP + letture base + sync API
+  discovery_sec: 3600
+  # Dopo quanti cicli discovery senza risposta l'host viene disabilitato
+  disable_after: 3
+
+discovery:
+  arp: true
+  dcp: true
+  cip: true
+  # Timeout identify_all() DCP in secondi (min 1)
+  dcp_timeout_sec: 5
+  # CIP: modalita' per-indirizzo (niente broadcast 255.255.255.255, serve
+  # quando la linea non ha router/broadcast). Sugli IP visti da ARP/DCP:
+  # pre-check TCP sulla porta, poi ListIdentity unicast.
+  cip_port: 44818
+  cip_port_timeout: 0.5
+  # IP aggiuntivi da interrogare in CIP oltre a quelli visti da ARP/DCP
+  cip_extra_ips: []
+  # Se true e nessun IP candidato, torna al vecchio ListIdentity broadcast
+  cip_broadcast_fallback: false
+  # Hostname device (sugli IP visti da ARP), query unicast direct-to-device,
+  # nessun DNS necessario: 1) NetBIOS node status UDP 137 (Windows/Samba)
+  # 2) mDNS reverse PTR UDP 5353 con bit QU (Avahi/Linux, macOS, IoT)
+  # 3) resolver di sistema solo se hostname_system: true (serve un DNS)
+  # Nome iniziale del device; nel merge vincono name_of_station e product_name.
+  hostname: true
+  hostname_netbios: true
+  hostname_mdns: true
+  hostname_system: false
+  hostname_timeout_sec: 1.0
+
+reads:
+  # Siemens: SZL via porta 102 (module, version, serial, system name)
+  s7_szl: true
+  # Allen-Bradley: LogixDriver.info -> keyswitch/mode (solo PLC Logix)
+  ab_keyswitch: true
+  # WAGO senza CIP/PROFINET: registri identificativi via Modbus TCP
+  wago_modbus: true
+  wago_modbus_port: 502
+  wago_modbus_timeout: 3.0
+
+# Template Zabbix (devono esistere, vedi templates/*.yaml) per tipo device
+templates:
+  allen_bradley: "Allen-Bradley PLC"
+  siemens: "Siemens PLC"
+  ethernetip: "EtherNet-IP device"
+  profinet: "PROFINET device"
+  pc: "Generic device"
+  generic: "Generic device"
+
+# Se solo l'ARP vede il device, viene classificato "pc" quando il vendor OUI
+# contiene una di queste parole (case-insensitive), altrimenti "generic"
+pc_vendor_keywords:
+  - dell
+  - hewlett
+  - hp
+  - lenovo
+  - intel
+  - realtek
+  - broadcom
+  - samsung
+  - toshiba
+  - fujitsu
+  - acer
+  - asus
+  - apple
+
+logging:
+  level: INFO            # DEBUG | INFO | WARNING | ERROR
+  file: ""               # vuoto = solo stdout, oppure percorso es. /var/log/ot-line.log
